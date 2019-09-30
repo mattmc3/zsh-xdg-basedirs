@@ -4,7 +4,6 @@
 # https://wiki.archlinux.org/index.php/XDG_user_directories
 0=${(%):-%N}
 
-
 # Make sure XDG dirs are set
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
@@ -22,6 +21,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
 fi
 
 if [[ $USE_XDG_DIRS == true ]]; then
+  setopt extended_glob
   for file in ${0:A:h}/xdg_support/**/*.xdg.zsh; do
     source $file
   done

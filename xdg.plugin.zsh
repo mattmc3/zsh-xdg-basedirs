@@ -9,7 +9,6 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-$HOME/.xdg}"
-USE_XDG_DIRS="${USE_XDG_DIRS:-true}"
 
 if [[ "$OSTYPE" == darwin* ]]; then
   export XDG_DESKTOP_DIR="$HOME/Desktop"
@@ -20,10 +19,13 @@ if [[ "$OSTYPE" == darwin* ]]; then
   export XDG_PUBLICSHARE_DIR="$HOME/Public"
 fi
 
-if [[ $USE_XDG_DIRS == true ]]; then
-  setopt extended_glob
-  for file in ${0:A:h}/xdg_support/**/*.xdg.zsh; do
-    source $file
-  done
-  unset file
-fi
+zstyle -a ':xdg-basedirs:*' 'apps' _xdg_apps || _xdg_apps=(less readline)
+
+for _app in $_xdg_apps; do
+  if [[ -f "${0:A:h}/apps/$_app.zsh" ]]; then
+    source "${0:A:h}/apps/$_app.zsh"
+  else
+    echo "XDG app not found: $_app" >&2
+  fi
+done
+unset _xdg_apps _app
